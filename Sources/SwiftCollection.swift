@@ -54,7 +54,7 @@ public extension Int  {
 // --------------------------------------------------
 
 /// Return a lazy Cartesian product of two sequences
-func cartesianProduct<S1: SequenceType, S2: SequenceType>(s1: S1, _ s2: S2) -> AnySequence<(S1.Generator.Element, S2.Generator.Element)> {
+public func cartesianProduct<S1: SequenceType, S2: SequenceType>(s1: S1, _ s2: S2) -> AnySequence<(S1.Generator.Element, S2.Generator.Element)> {
     let items = s1.lazy.flatMap({
         item1 in s2.lazy.map({
             item2 in (item1, item2)})})
@@ -62,7 +62,7 @@ func cartesianProduct<S1: SequenceType, S2: SequenceType>(s1: S1, _ s2: S2) -> A
 }
 
 /// Return a lazy Cartesian product of three sequences
-func cartesianProduct<S1: SequenceType, S2: SequenceType, S3: SequenceType>(s1: S1, _ s2: S2, _ s3: S3) -> AnySequence<(S1.Generator.Element, S2.Generator.Element, S3.Generator.Element)> {
+public func cartesianProduct<S1: SequenceType, S2: SequenceType, S3: SequenceType>(s1: S1, _ s2: S2, _ s3: S3) -> AnySequence<(S1.Generator.Element, S2.Generator.Element, S3.Generator.Element)> {
     let items = s1.lazy.flatMap({
         item1 in s2.lazy.flatMap({
             item2 in s3.lazy.map({
