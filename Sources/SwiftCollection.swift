@@ -21,14 +21,14 @@ Still needs massive documentation
 
 public extension Int  {
     /// Repeat a task n times
-    public func `repeat`(task: () -> Void) {
+    public func times(task: () -> Void) {
         for _ in 0..<self {
             task()
         }
     }
     
     /// Repeat a task n times taking an Int parameter
-    public func `repeat`(task: Int -> Void) {
+    public func times(task: Int -> Void) {
         for idx in 0..<self {
             task(idx)
         }
@@ -229,13 +229,12 @@ public extension Array {
 // --------------------------------------------------
 
 public extension Array {
-    public typealias ArrayType = Element
-    
     /// Return collection at subscripted indices
-    public subscript(i1: Int, i2: Int, rest: Int...) ->  [ArrayType] {
+    public subscript(i1: Int, i2: Int, rest: Int...) ->  [Element] {
         get {
             var result : [Element] = [self[i1], self[i2]]
             for index in rest {
+                guard index < count else {continue}
                 result.append(self[index])
             }
             return result
