@@ -4,10 +4,10 @@ Erica Sadun, http://ericasadun.com
 
 Collections, Sequences, and Strides
 
-Heavily curated. I'm kicking myself for not keeping 
+Heavily curated. I'm kicking myself for not keeping
 better notes.
 
-When in doubt I may have attributed stuff with 
+When in doubt I may have attributed stuff with
 assistance entirely to others. If it's gone the
 other way, let me know and I'll fix attribution
 
@@ -58,7 +58,7 @@ public func cartesianProduct<S1: SequenceType, S2: SequenceType>(s1: S1, _ s2: S
     let items = s1.lazy.flatMap({
         item1 in s2.lazy.map({
             item2 in (item1, item2)})})
-    return AnySequence {items.generate()}
+    return AnySequence { items.generate() }
 }
 
 /// Return a lazy Cartesian product of three sequences
@@ -67,7 +67,7 @@ public func cartesianProduct<S1: SequenceType, S2: SequenceType, S3: SequenceTyp
         item1 in s2.lazy.flatMap({
             item2 in s3.lazy.map({
                 item3 in (item1, item2, item3)})})})
-    return AnySequence {items.generate()}
+    return AnySequence { items.generate() }
 }
 
 // --------------------------------------------------
@@ -84,7 +84,8 @@ public extension CollectionType {
         return AnySequence {
             return anyGenerator {
                 guard index != self.endIndex else { return nil }
-                return (index, self[index++])
+                let nextIndex = index.successor(); defer { index = nextIndex }
+                return (index, self[nextIndex])
             }
         }
     }
@@ -135,7 +136,7 @@ public extension SequenceType {
 public extension SequenceType {
     /// Enumerate using offset index
     /// Thanks Mike Ash
-    public func enumerate(first first : Int) -> AnySequence<(Int, Generator.Element)> {
+    public func enumerate(first first: Int) -> AnySequence<(Int, Generator.Element)> {
         return AnySequence(enumerate().lazy.map({ ($0 + first, $1) }))
     }
 }
@@ -149,9 +150,9 @@ public extension CollectionType where Index: BidirectionalIndexType {
     ///
     /// - Author: oisdk
     public func lastIndexOf(@noescape isElement: Generator.Element -> Bool) -> Index? {
-        for i in indices.reverse()
-            where isElement(self[i]) {
-                return i
+        for index in indices.reverse()
+            where isElement(self[index]) {
+                return index
         }
         return nil
     }
@@ -219,7 +220,7 @@ public extension Array {
     
     // Thanks Wooji Juice
     public subscript (wrap index: Int) -> Element? {
-        if count == 0 {return nil}
+        if count == 0 { return nil }
         return self[(index % count + count) % count]
     }
 }
@@ -232,9 +233,9 @@ public extension Array {
     /// Return collection at subscripted indices
     public subscript(i1: Int, i2: Int, rest: Int...) ->  [Element] {
         get {
-            var result : [Element] = [self[i1], self[i2]]
+            var result: [Element] = [self[i1], self[i2]]
             for index in rest {
-                guard index < count else {continue}
+                guard index < count else { continue }
                 result.append(self[index])
             }
             return result
@@ -260,7 +261,7 @@ public func longZip<S0: SequenceType, S1: SequenceType>(seq0: S0, _ seq1: S1) ->
         var generators = (seq0.generate(), seq1.generate())
         return anyGenerator {
             let items = (generators.0.next(), generators.1.next())
-            if case (.None, .None) = items {return nil}
+            if case (.None, .None) = items { return nil }
             return items
         }
 }
@@ -276,7 +277,7 @@ public func ==== <S1: SequenceType, S2: SequenceType
 /// Courtesy of Donnacha Oisin Kidney:
 ///
 /// "An implementation of this is actually pretty complicated, since you aren’t supposed to call a generator once it’s returned nil."
-public struct NilPaddedZipGenerator<G0: GeneratorType, G1: GeneratorType> : GeneratorType {
+public struct NilPaddedZipGenerator<G0: GeneratorType, G1: GeneratorType>: GeneratorType {
     
     private var (g0, g1): (G0?, G1?)
     
@@ -292,7 +293,7 @@ public struct NilPaddedZipGenerator<G0: GeneratorType, G1: GeneratorType> : Gene
     }
 }
 
-public struct NilPaddedZip<S0: SequenceType, S1: SequenceType> : LazySequenceType {
+public struct NilPaddedZip<S0: SequenceType, S1: SequenceType>: LazySequenceType {
     
     private let (s0, s1): (S0, S1)
     public func generate() -> NilPaddedZipGenerator<S0.Generator, S1.Generator> {
