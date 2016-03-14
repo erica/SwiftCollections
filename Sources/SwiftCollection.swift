@@ -190,14 +190,33 @@ public extension CollectionType where Index: Comparable {
     /// Thanks Brent Royal-Gordon
     /// (http://twitter.com/brentdax/status/613894991778222081)
     public subscript (safe index: Index) -> Generator.Element? {
-        guard startIndex <= index && index < endIndex else {
-            return nil
-        }
+        guard indices =~ index else { return nil }
         return self[index]
     }
 }
 
-// I use UInt vs Int because it makes more sense to me for the 
+public extension RangeReplaceableCollectionType where Index: Comparable {
+    public subscript (safe index: Index) -> Generator.Element? {
+        get {
+            guard indices ~= index else { return nil }
+            return self[index]
+        }
+        set {
+            guard indices ~= index else { return }
+            if let newValue = newValue {
+                self.removeAtIndex(index)
+                self.insert(newValue, atIndex: index)
+            }
+        }
+    }
+    
+    public mutating func removeAtIndex(safe index: Self.Index) -> Self.Generator.Element {
+        guard indices ~= index else { return }
+        self.removeAtIndex(index)
+    }
+}
+
+// I use UInt vs Int because it makes more sense to me for the
 // first two of these but I have sufficient pushback to reconsider
 public extension Array {
     public func atIndex(index: UInt) -> Element? {
