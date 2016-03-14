@@ -190,7 +190,7 @@ public extension CollectionType where Index: Comparable {
     /// Thanks Brent Royal-Gordon
     /// (http://twitter.com/brentdax/status/613894991778222081)
     public subscript (safe index: Index) -> Generator.Element? {
-        guard indices =~ index else { return nil }
+        guard indices ~= index else { return nil }
         return self[index]
     }
 }
